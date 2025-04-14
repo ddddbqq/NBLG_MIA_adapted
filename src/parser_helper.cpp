@@ -185,7 +185,60 @@ Net *circuit::locateOrCreateNet(const std::string &netName) {
 
 void circuit::setMaxXY() { 
     g_max_x = round(round(rx)/min_width);
-    g_max_y = round(round(rx)/min_width);
+    g_max_y = round(round(ty)/min_width);
     g_max_y = g_max_y / defaultH * defaultH;
 }
 
+void circuit::setMIACells(int debug_flag, bool check_inter_row, bool do_detailed, float LVT_ratio, float HVT_ratio, int MIA_min_width) {
+  int LVT_num = LVT_ratio * defaultCellIds.size() + 1 ;
+  int HVT_num = HVT_ratio * defaultCellIds.size() + 1 ;
+  do_MIA = true;
+  check_inter_row_MIA = check_inter_row;
+  do_detailed_MIA = do_detailed;
+  MIA_min_width_ = MIA_min_width;
+  std::vector<Cell*> cells_cpy = cells;
+  if (debug_flag == 1) {
+    cells_cpy[0]->setLVT();
+    cells_cpy[0]->setIntraMIAvio();
+    cells_cpy[1]->setHVT();
+    cells_cpy[1]->setIntraMIAvio();
+    return;
+  }
+  std::random_shuffle(cells_cpy.begin(), cells_cpy.end());
+  for (int i = 0; i < LVT_num; i++) {
+    if(cells_cpy[i]->isFixed_) continue;
+    cells_cpy[i]->setLVT();
+    if (cells_cpy[i]->width_ != 0 && cells_cpy[i]->width_ < MIA_min_width) {
+      cells_cpy[i]->setIntraMIAvio();
+    }
+  }
+  for (int i = LVT_num; i < LVT_num + HVT_num; i++) {
+    if(cells_cpy[i]->isFixed_) continue;
+    cells_cpy[i]->setHVT();
+    if (cells_cpy[i]->width_ != 0 && cells_cpy[i]->width_ < MIA_min_width) {
+      cells_cpy[i]->setIntraMIAvio();
+    }
+  }
+}
+
+void circuit::double_or_triple_cell_height(float double_rate, float triple_rate) {
+  for (int i = 0; i < cells.size(); i++) {
+    if (cells[i]->isFixed_) continue;
+    if (cells[i]->height_ == defaultH and cells[i]->width_ >= 2) {
+      if (rand() % 100 < double_rate * 100) {
+        cells[i]->height_ = defaultH * 2;
+        cells[i]->width_ = cells[i]->width_ / 2;
+        cells[i]->aligendRow_ = 2;
+      }
+    }
+  }
+  for (int i = 0; i < cells.size(); i++) {
+    if (cells[i]->isFixed_) continue;
+    if (cells[i]->height_ == defaultH and cells[i]->width_ >= 3) {
+      if (rand() % 100 < triple_rate * 100) {
+        cells[i]->height_ = defaultH * 3;
+        cells[i]->width_ = cells[i]->width_ / 3;
+      }
+    }
+  }
+}

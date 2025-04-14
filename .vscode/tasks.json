@@ -1,0 +1,19 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "build",
+            "command": "${workspaceFolder}/build.sh",
+            "options": {
+                "cwd": "${workspaceFolder}"
+            }
+        },
+        {
+            "label": "do_nothing",
+            "command": "ls",
+            "options": {
+                "cwd": "${workspaceFolder}"
+            }
+        }
+    ]
+}

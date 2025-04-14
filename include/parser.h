@@ -8,6 +8,53 @@ static void* userData;
 #define PO_PIN 2
 #define NONPIO_PIN 3
 
+class Cell;
+namespace MIA{
+
+//const float MIA_WEIGHT = 3.0;
+//const float FIXED_HARD_FILLER_WEIGHT = 3.0;
+
+enum VT_type{
+  SVT,
+  LVT,
+  HVT,
+};
+
+class Filler{
+public:
+  Filler(){
+    x_ = -1;
+    y_ = -1;
+    width_ = 0;
+    height_ = 0;
+    cell_ = NULL;
+    type_ = SVT;
+    is_hard_ = false;
+    left_or_right_ = 0;
+    is_valid_ = true;
+  };
+  Filler(Cell* cell, int l_or_r, int width);  
+  void setSoft();
+  void setHard();
+  void changeWidth(int w);
+  void setPos(int x, int y);
+  double calCost(Cell* income_cell);
+  int getWidth();
+
+public:
+  int x_;
+  int y_; //bottom left corner
+  int width_;
+  int height_;
+  Cell* cell_;
+  VT_type type_;
+  bool is_hard_;
+  bool is_valid_;
+  unsigned left_or_right_; //0 for none, 1 for left, 2 for right, located at left or right of the cell
+
+};
+
+}
 
 class site {
 public:
@@ -181,12 +228,39 @@ public:
     Rect<int> extendedWin_;
     std::vector<Macro_pin> signal_pins_;  //dont use ptr for multi-thread safe
 
+    MIA::Filler* filler_l;
+    MIA::Filler* filler_r;
+    bool is_intra_MIA_vio_;
+    inline void setIntraMIAvio(){
+        is_intra_MIA_vio_ = true;
+    }
+    MIA::VT_type VT_type_;                     
+    inline void setSVT(){
+        VT_type_ = MIA::SVT;
+    }
+    inline void setLVT(){
+        VT_type_ = MIA::LVT;
+    }
+    inline void setHVT(){
+        VT_type_ = MIA::HVT;
+    }
+
+    int inter_row_overlap_t_;
+    int inter_row_overlap_b_;
+    MIA::Filler* inter_filler_tl;
+    MIA::Filler* inter_filler_tr;
+    MIA::Filler* inter_filler_bl;
+    MIA::Filler* inter_filler_br;
 
     
     Cell ()  { name_ = ""; cellorient_ = ""; id_ = 0; type_ = 0; regionId_ = -1; cur_x_ = 0; cur_y_ = 0; 
         cur_x0_ = 0; cur_y0_ = 0; lEdgeT_ = 0; rEdgeT_ = 0; of_ = 0; ripup_cnt_ = 0; width_ = 0; height_ = 0;
         aligendRow_ = 2; isBottomVss_ = true; isFixed_ = false; init_x_ = 0.0; init_y_ = 0.0;  cur_x_temp_ = 0.0; 
-        cur_y_temp_ = 0.0;  setWinSize(0, 0, 0, 0); }
+        cur_y_temp_ = 0.0;  setWinSize(0, 0, 0, 0); VT_type_ = MIA::SVT; is_intra_MIA_vio_ = false; 
+        filler_l = nullptr; filler_r = nullptr; inter_row_overlap_t_ = 0; 
+        inter_row_overlap_b_ = 0; inter_filler_tl = nullptr; inter_filler_tr = nullptr; 
+        inter_filler_bl = nullptr; inter_filler_br = nullptr;
+        }
     inline void setWinSize(int xLL, int yLL, int xUR, int yUR) {
         extendedWin_.set(xLL, yLL, xUR, yUR);
     }
@@ -289,6 +363,7 @@ public:
 class circuit
 {
 public:
+    double temp_delta_rate_for_output;
     std::map<std::string, unsigned > site2id;  /* between site     name and ID */
     std::map<std::string, unsigned > layer2id; /* between layer    name and ID */
     std::map<std::string, unsigned > macro2id; /* between macro    name and ID */
@@ -364,8 +439,21 @@ public:
     // set max_x, max_y
     void setMaxXY();
 
+    //std::vector<MIA::Filler*> fillers;
+    bool do_MIA;
+    bool check_inter_row_MIA;
+    bool do_detailed_MIA;
+    void setMIACells(int debug_flag = 0,bool check_inter_row = false, bool do_detailed = false, float LVT_ratio = 0.1, float HVT_ratio = 0.1, int MIA_min_width = 10);
+    void double_or_triple_cell_height(float double_rate = 0.1, float triple_rate = 0.05);
+    int MIA_min_width_;
+    void write_temp_result(std::string filename);
+
 public:
-    circuit() : edge_table(5, 0) {} 
+    circuit() : edge_table(5, 0) {
+        doParallel = false;
+        do_MIA = false;
+        check_inter_row_MIA = false;
+    } 
 };
 
 class CircuitParser

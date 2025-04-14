@@ -16,11 +16,15 @@ void Naller::nallSolver(const int threshold, std::vector<unsigned>& batch, int c
             if(sp->isFixed_) {
                 continue;
             }
-            if( !isStripCongested(sp->cur_x_, sp->cur_y_, sp->width_, sp->height_, 1, sp->regionId_) and (iter > threshold)) {
+            bool is_cong;
+            if(ckt.do_MIA) is_cong = isStripCongested(sp, 1, sp->regionId_);
+            else is_cong = isStripCongested(sp->cur_x_, sp->cur_y_, sp->width_, sp->height_, 1, sp->regionId_);
+            if(!is_cong and (iter > threshold)) {
                 continue;
             }
             ++sp->ripup_cnt_;
-            reduceNodeCost(sp->cur_x_, sp->cur_y_, sp->width_, sp->height_, p_factor_pThread);
+            if(ckt.do_MIA) moveOutCell(sp, p_factor_pThread);
+            else reduceNodeCost(sp->cur_x_, sp->cur_y_, sp->width_, sp->height_, p_factor_pThread);
             if(sp->ripup_cnt_ > 900) {  //for special case superblue11_a
                 route(cellId, true);
                 sp->ripup_cnt_ = 0;
@@ -29,7 +33,9 @@ void Naller::nallSolver(const int threshold, std::vector<unsigned>& batch, int c
                 route(cellId, p_factor_pThread);
             }          
         }
-        int of_cnt = countOverflows(batch);
+        int of_cnt ;
+        if(ckt.do_MIA) of_cnt = countMIAOverflows(batch);
+        else of_cnt = countOverflows(batch);
         if(of_cnt == 0 or (iter == iter_num - 1)) {
             return;
         }
@@ -62,14 +68,20 @@ void Naller::nallSolver(const int threshold, const int index) {
         for (auto cellId : batches[index]) // batch : global variable 
         {
             Cell* sp = ckt.cells[ cellId ];
-            if( !isStripCongested(sp->cur_x_, sp->cur_y_, sp->width_, sp->height_, 1, sp->regionId_) and (iter > threshold)) {
+            bool is_cong;
+            if(ckt.do_MIA) is_cong = isStripCongested(sp, 1, sp->regionId_);
+            else is_cong = isStripCongested(sp->cur_x_, sp->cur_y_, sp->width_, sp->height_, 1, sp->regionId_);
+            if(!is_cong and (iter > threshold)) {
                 continue;
             }
             ++sp->ripup_cnt_;
-            reduceNodeCost(sp->cur_x_, sp->cur_y_, sp->width_, sp->height_, p_factor_pThread);
+            if(ckt.do_MIA) moveOutCell(sp, p_factor_pThread);
+            else reduceNodeCost(sp->cur_x_, sp->cur_y_, sp->width_, sp->height_, p_factor_pThread);
             route(cellId, p_factor_pThread);
         }
-        int of_cnt = countOverflows(index, threshold);
+        int of_cnt;
+        if(ckt.do_MIA) of_cnt = countMIAOverflows(index, threshold);
+        else of_cnt = countOverflows(index, threshold);
         if(of_cnt == 0 or (iter == iter_num - 1)) {
             return;
         }
@@ -230,29 +242,55 @@ void Naller::nallSolver(const int threshold, bool doParallel) {
             {
                 Cell* sp = ckt.cells[ i ];  
                 if(sp->isFixed_) {
-                continue;
+                    continue;
                 }
-                if(!isStripCongested(sp->cur_x_, sp->cur_y_, sp->width_, sp->height_, 1, sp->regionId_) and (iter > threshold)) {
-                continue;
+                bool is_cong;
+                if(ckt.do_MIA) is_cong = isStripCongested(sp, 1, sp->regionId_);
+                else is_cong = isStripCongested(sp->cur_x_, sp->cur_y_, sp->width_, sp->height_, 1, sp->regionId_);
+                if(!is_cong and (iter > threshold)) {
+                    if (iter % INTRA_CELL_RIPUP_FREQ == 0 
+                        and iter <= INTRA_CELL_RIPUP_FREQ * INTRA_CELL_RIPUP_TIMES
+                        and sp->is_intra_MIA_vio_){;}
+                    else  continue;
+                    // continue;
                 }
                 if(sp->cur_x_ > 100000000 or sp->cur_x_ < 0) {
                 std::cout << sp->name_ << " 0.2 " << sp->init_x_ << " " << sp->init_y_ << std::endl;
                 }
-                reduceNodeCost(sp->cur_x_, sp->cur_y_, sp->width_, sp->height_);
-                route(i);                     
+                if(ckt.do_MIA) moveOutCell(sp);
+                else reduceNodeCost(sp->cur_x_, sp->cur_y_, sp->width_, sp->height_); //update cost
+                route(i);
+                if(ckt.do_MIA and ckt.do_detailed_MIA == false) DVFA(sp);                     
+            }
+            if(ckt.do_MIA and ckt.do_detailed_MIA == false) {
+                if (threshold > 0 and iter % 210 == 0){
+                    for (unsigned i : ckt.defaultCellIds){
+                        Cell* sp = ckt.cells[ i ];  
+                        if(sp->isFixed_) {
+                            continue;
+                        }
+                        DVFA(sp);
+                    }
+                }
             } 
             int of_cnt;
             if(iter == iter_num - 1) {
-                of_cnt = countOverflows(false);  //follow the serial flow.
+                if(ckt.do_MIA) of_cnt = countMIAOverflows(false);
+                else of_cnt = countOverflows(false);  //follow the serial flow.
             }
             else {
-                of_cnt = countOverflows(true);
+                if(ckt.do_MIA) of_cnt = countMIAOverflows(true);
+                else of_cnt = countOverflows(true);
             }
             if(of_cnt == 0 or (iter == iter_num - 1)) {
                 calDisplacment();
                 log()<<"  iteration : "<<iter<<" of_cnt : "<<of_cnt
                     <<"; s_am : "<<s_am/defaultH<<"; m_max : "<<max_disp/defaultH
                     <<"; avg_disp : "<<avg_disp<<"; max_disp : "<<max_disp<<std::endl;
+                if(threshold == 1) {
+                    of_cnt_for_temp_output = of_cnt;
+                }
+                
                 break;
             } 
             // preCalHis();
@@ -270,6 +308,8 @@ void Naller::nallSolver(const int threshold, bool doParallel) {
 bool Naller::nall() {
     
     timer::timer time;
+    bool do_MIA_ = ckt.do_MIA;
+    ckt.do_MIA = false;
     log() << "******************" << "legalization start" << "******************" << std::endl;
     // Preprocessing
     infos_resize();
@@ -287,6 +327,12 @@ bool Naller::nall() {
     for(unsigned i = 0; i < ckt.fenceRegions.size(); ++i)
         sort(ckt.fenceCellIds[i].begin(), ckt.fenceCellIds[i].end(), cmp_row);
     
+    // MIA preprocess
+    ckt.do_MIA = do_MIA_;
+    if (ckt.do_MIA) {
+        initNodeVTOccupy();
+        initFiller();
+    }
     // Check Score
     debug_max_print = false;
     calDisplacment();
@@ -305,22 +351,25 @@ bool Naller::nall() {
     // Solving Resource Allocation Task
     // NBLG: Main function of Algorithm
     nallSolver(0, doParallel);
+    std::cout<<"DVFA_cnt"<<DVFA_cnt<<std::endl;
     nallSolver(1, doParallel);
+    std::cout<<"DVFA_cnt"<<DVFA_cnt<<std::endl;
+    log() <<  "main stage completed!" << std::endl;
     // Post-Processing
     // tech constraints Preprocessing
-    init_edgeType();
-    // Greedy Searching
-    stripShiftingWithTech();
-    /*
-        // Cell Swapping: defaultCellIds & fenceCellIds
-        // it is not necessary to do stripSwapping due to the absence of tech constraints
-        stripSwapping_modified(ckt.defaultCellIds);
-        for(auto& fenceCellIds : ckt.fenceCellIds) {
-            stripSwapping_modified(fenceCellIds);
-        }
-    */
-    init_edgeType();  
-    stripShiftingWithTech();
+    // init_edgeType();
+    // // Greedy Searching
+    // stripShiftingWithTech();
+    // /*
+    //     // Cell Swapping: defaultCellIds & fenceCellIds
+    //     // it is not necessary to do stripSwapping due to the absence of tech constraints
+    //     stripSwapping_modified(ckt.defaultCellIds);
+    //     for(auto& fenceCellIds : ckt.fenceCellIds) {
+    //         stripSwapping_modified(fenceCellIds);
+    //     }
+    // */
+    // init_edgeType();  
+    // stripShiftingWithTech();
 
     log() << "******************" << "legalization completed. Total : " << time.elapsed() 
             << " sec ******************" << std::endl;
