@@ -49,6 +49,7 @@ set(MCHLG_SRC
     src/multi_Imp.cpp
     src/ripup.cpp
     src/post.cpp
+    src/MIA.cpp
 
     utils/log.cpp
     utils/draw.cpp

@@ -28,6 +28,9 @@ public:
         hisCost_ = 1.0;  //1.0
         pathCost_ = 1.0;  //1.0
         updated_ = false;
+        LVT_occupied_ = 0;
+        HVT_occupied_ = 0;
+        SVT_occupied_ = 0;        
         }
 public:
     int regionId_;
@@ -40,6 +43,10 @@ public:
     double pCost_;
     double pathCost_;
     bool updated_;
+    int LVT_occupied_;
+    int HVT_occupied_;
+    int SVT_occupied_;
+    std::vector<MIA::Filler*> fillerList;
 };
 // map grids
 class Node {
@@ -67,7 +74,9 @@ public:
         min_width = ckt.min_width;
         cell_num = ckt.cell_num;
 
-        max_disp_p = 1.5;
+        DVFA_cnt = 0;
+        //max_disp_p = 1.5;
+        max_disp_p = 0;
         numThreads = (int)pow(4, 1);  //1 : 4-threads ; 2 : 16threads
         numBatches = numThreads * 4;
         thread_xsize = 8; // 20 * 20
@@ -88,6 +97,8 @@ private:
     void moveOutBlock(const int cellId, const int blockId);
     void calTempCost(double& cost_temp, const int& s_x, const int& s_y, const int& width, 
                   const int& height, const std::vector<Macro_pin>& signal_pins, int regionId = -1);
+    void calTempCost(Cell* cell, double& cost_temp, const int& s_x, const int& s_y, const int& width, 
+                  const int& height, const std::vector<Macro_pin>& signal_pins, int regionId = -1);
     void routeISPD15(const int cellId);
     void route(const int cellId, double& p_factor_pThread);
     void route(const int cellId, const bool moveOut2flag);
@@ -95,10 +106,12 @@ private:
     bool outBox(const int& s_x, const int& s_y, const int& width, const int& height);
     void addNodeCost(const int& s_x, const int& s_y, 
                           const int& width, const int& height);
+    void moveInCell(Cell* cell, double p_factor_pThread = -1);
     void addNodeCost(const int& s_x, const int& s_y, 
                           const int& width, const int& height, double& p_factor_pThread);
     void reduceNodeCost(const int& s_x, const int& s_y, 
                           const int& width, const int& height);
+    void moveOutCell(Cell* cell, double p_factor_pThread = -1);
     void reduceNodeCost(const int& s_x, const int& s_y, 
                           const int& width, const int& height, double& p_factor_pThread);
     bool moveOutFence(Cell *sp, int count_outRegion);
@@ -111,14 +124,18 @@ private:
     void nallSolver(const int threshold, bool doParallel);
     bool isStripCongested(const int& s_x, const int& s_y,
                         const int& width, const int& height, const int& lBound, int regionId = -1);
-
+    bool isStripCongested(Cell* cell, const int& lBound, int regionId = -1);
     void nallSolver(const int threshold, const int index);
     void nallSolver(const int threshold, std::vector<unsigned>& batch, int cnt_th = 50);
     int countOverflows(const std::vector<unsigned>& batch);
     int countOverflows(int index, int threshold);
     int countOverflows(bool update_his);
+    int countMIAOverflows(bool update_his);
+    int countMIAOverflows(const std::vector<unsigned>& batch);
+    int countMIAOverflows(int index, int threshold);
     void calCellOf(const int& s_x, const int& s_y, const int& width, const int& height, 
                     int& of, int& of_cnt, bool update_his = true);
+    void calCellMIAOf(Cell* cell, int& of_cnt, bool update_his = true);
     void init_edgeType();
     void stripShiftingWithTech();
     void reduceNodeCostWithEdgeT(const int& s_x, const int& s_y, 
@@ -136,7 +153,34 @@ private:
     bool cmp_congestion(int id1, int id2);
     bool cmpT_congestion(unsigned a, unsigned b);
     bool cmp_distance(unsigned id1, unsigned id2);
+    bool initNodeVTOccupy();
+    bool reduceVTOccupy(Cell* cell);
+    bool reduceVTOccupy(const int& s_x, const int& s_y, 
+                    const int& width, const int& height, MIA::VT_type vt);
+    bool addVTOccupy(Cell* cell);
+    bool addVTOccupy(const int& s_x, const int& s_y, 
+                    const int& width, const int& height, MIA::VT_type vt);
+    int getNodeVTOccupy(const int& s_x, const int& s_y, MIA::VT_type vt);
+    int getNodeOccupy(const int& s_x, const int& s_y);
+    bool addNodeFillerOccupy(MIA::Filler* filler);
+    bool reduceNodeFillerOccupy(MIA::Filler* filler);
+    bool changeFillerWidth(MIA::Filler* filler, const int& w, bool update_node);
+    bool genFillers(Cell* cell, const int& left_w, const int& right_w, bool is_hard);
+    bool genInterRowFillers(Cell* cell, const int& left_w, const int& right_w, 
+                    bool is_hard, int overlap_w = 0, int s_x = 0, int top_or_bottom = 0);
+
+    
+    bool DVFA(Cell* cell); //Dynamic Virtual Filler Algorithm
+    int DVFA_cnt;
+    bool initFiller();
+
+    void clearInterRowFiller(Cell* cell, bool check_filler_exist = true, 
+                             bool check_top = true, bool check_bottom = true);
+    bool checkInterRowMIA(Cell* cell);
 private:
+    static const int dir_array_x_mia[67];
+    static const int dir_array_y_mia[67];
+    static const int total_direc_num_mia;
     static const int dir_array_x[49];
     static const int dir_array_x2[57];
     static const int dir_array_x3[77];
@@ -173,9 +217,10 @@ private:
     std::vector<std::vector<unsigned>> task_id;
     Node node;
     pqueue_t priority_queue_;
-    
+public:
     // global variables
     circuit& ckt;
+    int of_cnt_for_temp_output;
     double s_am;
     double avg_disp;
     double max_disp;

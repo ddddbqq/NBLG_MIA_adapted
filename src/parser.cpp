@@ -1348,5 +1348,6 @@ void circuit::cal_hpwl() {
     if(doTech) {
         log() << "score : " << (1.0 + delta_rate / 100.0 + (Np + Ne + 0.0) / cell_num) * (1.0 + max_disp/defaultH/100.0) * s_am / defaultH << std::endl;
     }
+    temp_delta_rate_for_output = delta_rate;
 }
 

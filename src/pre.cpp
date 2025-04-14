@@ -274,6 +274,9 @@ void Naller::init_adjust() {
     initSpNetRegion(); // P/G nets
     int num_errorRegion = 0;
     for(unsigned i : ckt.cellIds) {
+        //std::cout<<"cellId: "<<i<<std::endl;
+        // if (i == 2110) 
+        //     i = 2110;
         Cell* sp = ckt.cells[ i ];
         if(sp->isFixed_) {     //block  
             continue;
