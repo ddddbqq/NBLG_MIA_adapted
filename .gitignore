@@ -1,3 +1,6 @@
 build/
 output/
 logdir/
+benchmarks/mgc_superblue11/
+benchmarks/mgc_superblue12/
+benchmarks/mgc_superblue16/

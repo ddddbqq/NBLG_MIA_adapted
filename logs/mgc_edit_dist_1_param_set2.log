@@ -1,0 +1,228 @@
+=== Parameters: param_set2 ===
+-- The C compiler identification is GNU 8.5.0
+-- The CXX compiler identification is GNU 8.5.0
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Check for working C compiler: /usr/lib64/ccache/cc - skipped
+-- Detecting C compile features
+-- Detecting C compile features - done
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Check for working CXX compiler: /usr/lib64/ccache/c++ - skipped
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Found OpenMP_C: -fopenmp (found version "4.5") 
+-- Found OpenMP_CXX: -fopenmp (found version "4.5") 
+-- Found OpenMP: TRUE (found version "4.5")  
+Found GD: YES
+-- Looking for gdImagePng in /usr/lib64/libgd.so
+-- Looking for gdImagePng in /usr/lib64/libgd.so - found
+-- Found ZLIB: /usr/local/lib64/libz.so (found version "1.3.1")  
+-- Found PNG: /usr/lib64/libpng.so (found version "1.6.34") 
+-- Looking for gdImageJpeg in /usr/lib64/libgd.so
+-- Looking for gdImageJpeg in /usr/lib64/libgd.so - found
+-- Found JPEG: /usr/lib64/libjpeg.so (found version "62") 
+-- Looking for gdImageGif in /usr/lib64/libgd.so
+-- Looking for gdImageGif in /usr/lib64/libgd.so - found
+-- Found GD: /usr/lib64/libgd.so
+-- Found BISON: /usr/bin/bison (found version "3.0.4") 
+CMake Deprecation Warning at module/lef/5.8-p027/CMakeLists.txt:6 (cmake_minimum_required):
+  Compatibility with CMake < 2.8.12 will be removed from a future version of
+  CMake.
+
+  Update the VERSION argument <min> value or use a ...<max> suffix to tell
+  CMake that the project does not need compatibility with older versions.
+
+
+-- leflib_home: /home/jhqiao/workspace/NBLG/Mixed-Cell-Height_legalizer/module/lef/5.8-p027
+-- Configuring done (0.8s)
+-- Generating done (0.0s)
+-- Build files have been written to: /home/jhqiao/workspace/NBLG/Mixed-Cell-Height_legalizer/build
+[  1%] Built target LefBisonTarget
+[  1%] Built target DefBisonTarget
+[  2%] Building CXX object module/def/5.8-p027/CMakeFiles/def.dir/def/defiAlias.cpp.o
+[  2%] Building CXX object module/def/5.8-p027/CMakeFiles/def.dir/def/defiAssertion.cpp.o
+[  3%] Building CXX object module/def/5.8-p027/CMakeFiles/def.dir/def/defiBlockage.cpp.o
+[  4%] Building CXX object module/def/5.8-p027/CMakeFiles/def.dir/def/defiComponent.cpp.o
+[  5%] Building CXX object module/def/5.8-p027/CMakeFiles/def.dir/def/defiDebug.cpp.o
+[  5%] Building CXX object module/lef/5.8-p027/CMakeFiles/lef.dir/lef/crypt.cpp.o
+[  6%] Building CXX object module/def/5.8-p027/CMakeFiles/def.dir/def/defiFill.cpp.o
+[  8%] Building CXX object module/def/5.8-p027/CMakeFiles/def.dir/def/defiFPC.cpp.o
+[  8%] Building CXX object module/lef/5.8-p027/CMakeFiles/lef.dir/lef/lefiArray.cpp.o
+[  9%] Building CXX object module/def/5.8-p027/CMakeFiles/def.dir/def/defiIOTiming.cpp.o
+[  9%] Building CXX object module/lef/5.8-p027/CMakeFiles/lef.dir/lef/lefiCrossTalk.cpp.o
+[ 10%] Building CXX object module/def/5.8-p027/CMakeFiles/def.dir/def/defiMisc.cpp.o
+[ 11%] Building CXX object module/lef/5.8-p027/CMakeFiles/lef.dir/lef/lefiDebug.cpp.o
+[ 12%] Building CXX object module/def/5.8-p027/CMakeFiles/def.dir/def/defiNet.cpp.o
+[ 12%] Building CXX object module/lef/5.8-p027/CMakeFiles/lef.dir/lef/lefiEncryptInt.cpp.o
+[ 12%] Building CXX object module/def/5.8-p027/CMakeFiles/def.dir/def/defiGroup.cpp.o
+[ 13%] Building CXX object module/def/5.8-p027/CMakeFiles/def.dir/def/defiNonDefault.cpp.o
+[ 14%] Building CXX object module/def/5.8-p027/CMakeFiles/def.dir/def/defiPartition.cpp.o
+[ 14%] Building CXX object module/lef/5.8-p027/CMakeFiles/lef.dir/lef/lefiLayer.cpp.o
+[ 14%] Building CXX object module/def/5.8-p027/CMakeFiles/def.dir/def/defiPath.cpp.o
+[ 16%] Building CXX object module/lef/5.8-p027/CMakeFiles/lef.dir/lef/lefiMacro.cpp.o
+[ 16%] Building CXX object module/def/5.8-p027/CMakeFiles/def.dir/def/defiPinCap.cpp.o
+[ 18%] Building CXX object module/lef/5.8-p027/CMakeFiles/lef.dir/lef/lefiMisc.cpp.o
+[ 18%] Building CXX object module/def/5.8-p027/CMakeFiles/def.dir/def/defiPinProp.cpp.o
+[ 18%] Building CXX object module/lef/5.8-p027/CMakeFiles/lef.dir/lef/lefiNonDefault.cpp.o
+[ 18%] Building CXX object module/lef/5.8-p027/CMakeFiles/lef.dir/lef/lefiTBExt.cpp.o
+[ 18%] Building CXX object module/def/5.8-p027/CMakeFiles/def.dir/def/defiProp.cpp.o
+[ 20%] Building CXX object module/lef/5.8-p027/CMakeFiles/lef.dir/lef/lefiProp.cpp.o
+[ 20%] Building CXX object module/lef/5.8-p027/CMakeFiles/lef.dir/lef/lefiPropType.cpp.o
+[ 21%] Building CXX object module/def/5.8-p027/CMakeFiles/def.dir/def/defiPropType.cpp.o
+[ 22%] Building CXX object module/lef/5.8-p027/CMakeFiles/lef.dir/lef/lefiUnits.cpp.o
+[ 23%] Building CXX object module/lef/5.8-p027/CMakeFiles/lef.dir/lef/lefiVia.cpp.o
+[ 23%] Building CXX object module/lef/5.8-p027/CMakeFiles/lef.dir/lef/lefiViaRule.cpp.o
+[ 25%] Building CXX object module/lef/5.8-p027/CMakeFiles/lef.dir/lef/lef_keywords.cpp.o
+[ 25%] Building CXX object module/def/5.8-p027/CMakeFiles/def.dir/def/defiRegion.cpp.o
+[ 25%] Building CXX object module/def/5.8-p027/CMakeFiles/def.dir/def/defiRowTrack.cpp.o
+[ 27%] Building CXX object module/lef/5.8-p027/CMakeFiles/lef.dir/lef/lefrData.cpp.o
+[ 27%] Building CXX object module/def/5.8-p027/CMakeFiles/def.dir/def/defiScanchain.cpp.o
+[ 27%] Building CXX object module/lef/5.8-p027/CMakeFiles/lef.dir/lef/lefrCallbacks.cpp.o
+[ 29%] Building CXX object module/lef/5.8-p027/CMakeFiles/lef.dir/lef/lefrReader.cpp.o
+[ 29%] Building CXX object module/def/5.8-p027/CMakeFiles/def.dir/def/defiSite.cpp.o
+[ 29%] Building CXX object module/def/5.8-p027/CMakeFiles/def.dir/def/defiSlot.cpp.o
+[ 31%] Building CXX object module/lef/5.8-p027/CMakeFiles/lef.dir/lef/lefrSettings.cpp.o
+[ 31%] Building CXX object module/def/5.8-p027/CMakeFiles/def.dir/def/defiTimingDisable.cpp.o
+[ 31%] Building CXX object module/lef/5.8-p027/CMakeFiles/lef.dir/lef/lef.tab.cpp.o
+[ 33%] Building CXX object module/def/5.8-p027/CMakeFiles/def.dir/def/defiUtil.cpp.o
+[ 31%] Building CXX object module/def/5.8-p027/CMakeFiles/def.dir/def/defiVia.cpp.o
+[ 33%] Building CXX object module/lef/5.8-p027/CMakeFiles/lef.dir/lef/lefwWriterCalls.cpp.o
+[ 34%] Building CXX object module/def/5.8-p027/CMakeFiles/def.dir/def/def_keywords.cpp.o
+[ 35%] Building CXX object module/lef/5.8-p027/CMakeFiles/lef.dir/lef/lefwWriter.cpp.o
+[ 36%] Building CXX object module/def/5.8-p027/CMakeFiles/def.dir/def/defrCallbacks.cpp.o
+[ 36%] Building CXX object module/def/5.8-p027/CMakeFiles/def.dir/def/defrData.cpp.o
+[ 37%] Building CXX object module/def/5.8-p027/CMakeFiles/def.dir/def/defrReader.cpp.o
+[ 38%] Building CXX object module/def/5.8-p027/CMakeFiles/def.dir/def/defrSettings.cpp.o
+[ 39%] Building CXX object module/def/5.8-p027/CMakeFiles/def.dir/def/def.tab.cpp.o
+[ 40%] Building CXX object module/def/5.8-p027/CMakeFiles/def.dir/def/defwWriterCalls.cpp.o
+[ 40%] Building CXX object module/def/5.8-p027/CMakeFiles/def.dir/def/defwWriter.cpp.o
+[ 40%] Linking CXX static library /home/jhqiao/workspace/NBLG/Mixed-Cell-Height_legalizer/module/def/5.8-p027/lib/libdef.a
+[ 40%] Linking CXX static library /home/jhqiao/workspace/NBLG/Mixed-Cell-Height_legalizer/module/lef/5.8-p027/lib/liblef.a
+[ 41%] Built target lef
+[ 41%] Built target def
+[ 42%] Building CXX object module/lef/5.8-p027/CMakeFiles/lefzlib.dir/lefzlib/lefzlib.cpp.o
+[ 43%] Building C object module/lef/5.8-p027/CMakeFiles/clef.dir/clef/lefiEncryptExt.c.o
+[ 43%] Building C object module/lef/5.8-p027/CMakeFiles/clef.dir/clef/lefiTBInt.c.o
+[ 45%] Building CXX object module/def/5.8-p027/CMakeFiles/defzlib.dir/defzlib/defzlib.cpp.o
+[ 45%] Building CXX object module/lef/5.8-p027/CMakeFiles/clef.dir/clef/xlefiArray.cpp.o
+[ 45%] Building CXX object module/lef/5.8-p027/CMakeFiles/clef.dir/clef/xlefiDebug.cpp.o
+[ 46%] Building CXX object module/lef/5.8-p027/CMakeFiles/clef.dir/clef/xlefiCrossTalk.cpp.o
+[ 50%] Building CXX object CMakeFiles/MCHLGlib.dir/src/utils.cpp.o
+[ 50%] Building CXX object module/lef/5.8-p027/CMakeFiles/clef.dir/clef/xlefiLayer.cpp.o
+[ 50%] Building CXX object module/lef/5.8-p027/CMakeFiles/clef.dir/clef/xlefiEncryptInt.cpp.o
+[ 50%] Building CXX object module/lef/5.8-p027/CMakeFiles/clef.dir/clef/xlefiMisc.cpp.o
+[ 50%] Building CXX object CMakeFiles/MCHLGlib.dir/src/matrix.cpp.o
+[ 51%] Building CXX object module/def/5.8-p027/CMakeFiles/cdef.dir/cdef/xdefiAssertion.cpp.o
+[ 53%] Building CXX object CMakeFiles/MCHLGlib.dir/src/rtree.cpp.o
+[ 53%] Building CXX object module/lef/5.8-p027/CMakeFiles/clef.dir/clef/xlefiMacro.cpp.o
+[ 53%] Building CXX object module/lef/5.8-p027/CMakeFiles/clef.dir/clef/xlefiNonDefault.cpp.o
+[ 54%] Building CXX object CMakeFiles/MCHLGlib.dir/src/munkres.cpp.o
+[ 54%] Building CXX object module/lef/5.8-p027/CMakeFiles/clef.dir/clef/xlefiProp.cpp.o
+[ 55%] Building CXX object CMakeFiles/MCHLGlib.dir/src/main.cpp.o
+[ 56%] Building CXX object module/lef/5.8-p027/CMakeFiles/clef.dir/clef/xlefiPropType.cpp.o
+[ 57%] Building CXX object CMakeFiles/MCHLGlib.dir/src/parser.cpp.o
+[ 58%] Building CXX object module/def/5.8-p027/CMakeFiles/cdef.dir/cdef/xdefiBlockage.cpp.o
+[ 58%] Building CXX object CMakeFiles/MCHLGlib.dir/src/parser_helper.cpp.o
+[ 58%] Linking CXX static library /home/jhqiao/workspace/NBLG/Mixed-Cell-Height_legalizer/module/lef/5.8-p027/lib/liblefzlib.a
+[ 59%] Building CXX object CMakeFiles/MCHLGlib.dir/src/nall.cpp.o
+[ 59%] Building CXX object CMakeFiles/MCHLGlib.dir/src/pre.cpp.o
+[ 60%] Linking CXX static library /home/jhqiao/workspace/NBLG/Mixed-Cell-Height_legalizer/module/def/5.8-p027/lib/libdefzlib.a
+[ 61%] Building CXX object module/def/5.8-p027/CMakeFiles/cdef.dir/cdef/xdefiComponent.cpp.o
+[ 62%] Building CXX object CMakeFiles/MCHLGlib.dir/src/multi_Imp.cpp.o
+[ 62%] Building CXX object module/lef/5.8-p027/CMakeFiles/clef.dir/clef/xlefiUnits.cpp.o
+[ 63%] Building CXX object module/lef/5.8-p027/CMakeFiles/clef.dir/clef/xlefiUtil.cpp.o
+[ 64%] Building CXX object module/lef/5.8-p027/CMakeFiles/clef.dir/clef/xlefiVia.cpp.o
+[ 64%] Building CXX object module/lef/5.8-p027/CMakeFiles/clef.dir/clef/xlefiViaRule.cpp.o
+[ 65%] Building CXX object module/lef/5.8-p027/CMakeFiles/clef.dir/clef/xlefrReader.cpp.o
+[ 66%] Building CXX object module/def/5.8-p027/CMakeFiles/cdef.dir/cdef/xdefiDebug.cpp.o
+[ 66%] Building CXX object module/def/5.8-p027/CMakeFiles/cdef.dir/cdef/xdefiFill.cpp.o
+[ 67%] Building CXX object CMakeFiles/MCHLGlib.dir/src/ripup.cpp.o
+[ 68%] Building CXX object module/def/5.8-p027/CMakeFiles/cdef.dir/cdef/xdefiFPC.cpp.o
+[ 69%] Building CXX object module/def/5.8-p027/CMakeFiles/cdef.dir/cdef/xdefiGroup.cpp.o
+[ 69%] Building CXX object CMakeFiles/MCHLGlib.dir/src/post.cpp.o
+[ 70%] Building CXX object module/lef/5.8-p027/CMakeFiles/clef.dir/clef/xlefwWriterCalls.cpp.o
+[ 71%] Building CXX object CMakeFiles/MCHLGlib.dir/src/MIA.cpp.o
+[ 71%] Building CXX object module/def/5.8-p027/CMakeFiles/cdef.dir/cdef/xdefiIOTiming.cpp.o
+[ 72%] Building CXX object module/def/5.8-p027/CMakeFiles/cdef.dir/cdef/xdefiMisc.cpp.o
+[ 72%] Building CXX object module/lef/5.8-p027/CMakeFiles/clef.dir/clef/xlefwWriter.cpp.o
+[ 73%] Building CXX object CMakeFiles/MCHLGlib.dir/utils/log.cpp.o
+[ 74%] Building CXX object module/def/5.8-p027/CMakeFiles/cdef.dir/cdef/xdefiNet.cpp.o
+[ 74%] Building CXX object CMakeFiles/MCHLGlib.dir/utils/draw.cpp.o
+[ 74%] Building CXX object module/def/5.8-p027/CMakeFiles/cdef.dir/cdef/xdefiNonDefault.cpp.o
+[ 75%] Linking CXX static library /home/jhqiao/workspace/NBLG/Mixed-Cell-Height_legalizer/module/lef/5.8-p027/lib/libclef.a
+[ 76%] Building CXX object module/def/5.8-p027/CMakeFiles/cdef.dir/cdef/xdefiPartition.cpp.o
+[ 77%] Building CXX object module/def/5.8-p027/CMakeFiles/cdef.dir/cdef/xdefiPath.cpp.o
+[ 77%] Building CXX object module/def/5.8-p027/CMakeFiles/cdef.dir/cdef/xdefiPinCap.cpp.o
+[ 78%] Building CXX object module/def/5.8-p027/CMakeFiles/cdef.dir/cdef/xdefiPinProp.cpp.o
+[ 78%] Built target defzlib
+[ 78%] Built target lefzlib
+[ 79%] Building CXX object module/def/5.8-p027/CMakeFiles/cdef.dir/cdef/xdefiProp.cpp.o
+[ 79%] Building CXX object module/def/5.8-p027/CMakeFiles/cdef.dir/cdef/xdefiPropType.cpp.o
+[ 80%] Building CXX object module/def/5.8-p027/CMakeFiles/cdef.dir/cdef/xdefiRegion.cpp.o
+[ 81%] Building CXX object module/def/5.8-p027/CMakeFiles/cdef.dir/cdef/xdefiRowTrack.cpp.o
+[ 81%] Building CXX object module/def/5.8-p027/CMakeFiles/cdef.dir/cdef/xdefiScanchain.cpp.o
+[ 82%] Building CXX object module/def/5.8-p027/CMakeFiles/cdef.dir/cdef/xdefiSite.cpp.o
+[ 83%] Building CXX object module/def/5.8-p027/CMakeFiles/cdef.dir/cdef/xdefiSlot.cpp.o
+[ 83%] Building CXX object module/def/5.8-p027/CMakeFiles/cdef.dir/cdef/xdefiTimingDisable.cpp.o
+[ 84%] Building CXX object module/def/5.8-p027/CMakeFiles/cdef.dir/cdef/xdefiVia.cpp.o
+[ 85%] Building CXX object module/def/5.8-p027/CMakeFiles/cdef.dir/cdef/xdefrReader.cpp.o
+[ 85%] Building CXX object module/def/5.8-p027/CMakeFiles/cdef.dir/cdef/xdefwWriterCalls.cpp.o
+[ 86%] Building CXX object module/def/5.8-p027/CMakeFiles/cdef.dir/cdef/xdefwWriter.cpp.o
+[ 87%] Linking CXX static library /home/jhqiao/workspace/NBLG/Mixed-Cell-Height_legalizer/module/def/5.8-p027/lib/libcdef.a
+[ 88%] Linking CXX static library libMCHLGlib.a
+[ 88%] Built target clef
+[ 89%] Building C object module/lef/5.8-p027/CMakeFiles/clefzlib.dir/clefzlib/clefzlib.c.o
+[ 89%] Linking CXX static library /home/jhqiao/workspace/NBLG/Mixed-Cell-Height_legalizer/module/lef/5.8-p027/lib/libclefzlib.a
+[ 89%] Built target cdef
+[ 89%] Building C object module/def/5.8-p027/CMakeFiles/cdefzlib.dir/cdefzlib/cdefzlib.c.o
+[ 90%] Linking CXX static library /home/jhqiao/workspace/NBLG/Mixed-Cell-Height_legalizer/module/def/5.8-p027/lib/libcdefzlib.a
+[ 90%] Built target clefzlib
+[ 90%] Built target cdefzlib
+[ 90%] Building CXX object CMakeFiles/MCHLG.dir/src/utils.cpp.o
+[ 91%] Building CXX object CMakeFiles/MCHLG.dir/src/rtree.cpp.o
+[ 95%] Building CXX object CMakeFiles/MCHLG.dir/src/multi_Imp.cpp.o
+[ 95%] Building CXX object CMakeFiles/MCHLG.dir/src/pre.cpp.o
+[ 95%] Building CXX object CMakeFiles/MCHLG.dir/src/parser.cpp.o
+[ 95%] Building CXX object CMakeFiles/MCHLG.dir/src/matrix.cpp.o
+[ 95%] Building CXX object CMakeFiles/MCHLG.dir/src/main.cpp.o
+[ 95%] Building CXX object CMakeFiles/MCHLG.dir/src/parser_helper.cpp.o
+[ 95%] Building CXX object CMakeFiles/MCHLG.dir/src/munkres.cpp.o
+[ 96%] Building CXX object CMakeFiles/MCHLG.dir/src/ripup.cpp.o
+[ 97%] Building CXX object CMakeFiles/MCHLG.dir/src/nall.cpp.o
+[ 97%] Building CXX object CMakeFiles/MCHLG.dir/src/MIA.cpp.o
+[ 98%] Building CXX object CMakeFiles/MCHLG.dir/src/post.cpp.o
+[ 99%] Building CXX object CMakeFiles/MCHLG.dir/utils/log.cpp.o
+[100%] Building CXX object CMakeFiles/MCHLG.dir/utils/draw.cpp.o
+[100%] Built target MCHLGlib
+[100%] Linking CXX executable MCHLG
+[100%] Built target MCHLG
+ lef               : ./benchmarks/mgc_edit_dist_1/tech.lef
+ lef               : ./benchmarks/mgc_edit_dist_1/cells_modified.lef
+ def               : ./benchmarks/mgc_edit_dist_1/placed.def
+ constraints       : ./benchmarks/mgc_edit_dist_1/placement.constraints
+ out_def           : ./output/mgc_edit_dist_1.def
+WARNING (LEFPARS-2007): NAMESCASESENSITIVE statement is obsolete in version 5.6 and later.
+The LEF parser will ignore this statement.
+To avoid this warning in the future, remove this statement from the LEF file with version 5.6 or later. See file ./benchmarks/mgc_edit_dist_1/tech.lef at line 4.
+
+Reading ./benchmarks/mgc_edit_dist_1/tech.lef is Done
+Reading ./benchmarks/mgc_edit_dist_1/cells_modified.lef is Done
+Reading ./benchmarks/mgc_edit_dist_1/placed.def is Done
+Design Name: edit_dist
+[   1.589 ] ******************legalization start******************
+[   1.684 ] ******************init_adjust******************
+[   1.684 ]   fenceRegions: 0 defaultCellIds : 130661
+[   1.684 ]   spNetRegions 89
+[   1.725 ]   num_errorRegion : 0
+[   1.735 ]   fenceRegion matched
+[   1.833 ]   after preprocessing: s_am: inf;m_max: 0.5495;avg_disp: 2.74474;max_disp: 5.495
+[  84.784 ]   iteration : 599 of_cnt : 52; s_am : inf; m_max : 8.6945; avg_disp : 5.60163; max_disp : 86.945
+DVFA_cnt: 5618002
+[ 168.909 ]   iteration : 861 of_cnt : 0; s_am : inf; m_max : 9.6785; avg_disp : 5.7523; max_disp : 96.785
+DVFA_cnt: 9229325
+[ 168.909 ] main stage completed!
+[ 168.909 ] ******************legalization completed. Total : 167.32 sec ******************
+[ 168.912 ]   row aligned
+[ 168.924 ]   fenceRegion matched
+[ 169.178 ]   hpwl_gp : 4.87366e+06 hpwl_lg : 4.99525e+06 delta_rate : 2.49491%

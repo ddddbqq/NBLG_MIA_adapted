@@ -50,14 +50,14 @@ Score: 18.0497, delta_rate: 40.4748%, temp_avg_disp: 12.8491, of_cnt: 860
 after modifying, best config for fft_2_md2:
 4.5, 1.0, 4.8, 9.0, 1, 100
 score = (1 + delta_rate/100) * temp_avg_disp * (1 + of_cnt/1000);
-Score: 13.8448
+Score: 13.8448 //wrong! it's double or triple height version
 """
 
 """
 update: best config for mgc_pci_bridge32_1:
-4.5, 1.0, 7.2, 9.0, 0, 100
+10.0, 1.0, 5.6, 9.0, 1, 200
 score = (1 + delta_rate/100) * temp_avg_disp * (1 + of_cnt/1000);
-avg_disp : 8.9382, of_cnt : 237, hpwl_gp : 276828 hpwl_lg : 340279 delta_rate : 22.9206%
+avg_disp : 8.80869, of_cnt : 5, hpwl_gp : 276828 hpwl_lg : 339968 delta_rate : 22.8082%
 """
 
 #temp member for strict score cal: naller.of_cnt_for_temp_output, ckt.temp_delta_rate, function nallsovler, cal_hpwl
@@ -88,17 +88,25 @@ DEFAULT_VALUES = {
 }
 
 COARSE_RANGES = {
-    'INTRA_MIA_ABUTT_WEIGHT': [0, 1, 2, 3, 4, 5, 6, 7, 8, 10, 11, 12, 13, 13, 15],    
-    'MIA_WEIGHT': [0, 0.3, 0.6, 0.9, 1.2, 1.35, 1.5, 1.65, 1.8, 2.1, 2.4, 2.7, 3.0, 3.3, 3.6, 4.0, 4.5, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0],                  
-    'FIXED_HARD_FILLER_WEIGHT': [0, 0.8, 1.6, 2.4, 3.2, 4.0, 4.8, 5.6, 6.4, 7.2, 8.0, 9.0, 10.0],
-    'ABS_DISPLACEMENT_WEIGHT': [1, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24]  
+    'INTRA_MIA_ABUTT_WEIGHT': [4, 5, 6, 7, 8, 10, 11],    
+    'MIA_WEIGHT': [0.6, 0.9, 1.2, 1.35],                  
+    'FIXED_HARD_FILLER_WEIGHT': [4.0, 4.8, 5.6, 6.4],
+    'ABS_DISPLACEMENT_WEIGHT': [6, 8, 10, 12]  
 }
 
+# COARSE_RANGES = {
+#     'INTRA_MIA_ABUTT_WEIGHT': [0, 1, 2, 3, 4, 5, 6, 7, 8, 10, 11, 12, 13, 13, 15],    
+#     'MIA_WEIGHT': [0, 0.3, 0.6, 0.9, 1.2, 1.35, 1.5, 1.65, 1.8, 2.1, 2.4, 2.7, 3.0, 3.3, 3.6, 4.0, 4.5, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0],                  
+#     'FIXED_HARD_FILLER_WEIGHT': [0, 0.8, 1.6, 2.4, 3.2, 4.0, 4.8, 5.6, 6.4, 7.2, 8.0, 9.0, 10.0],
+#     'ABS_DISPLACEMENT_WEIGHT': [1, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24]  
+# }
+
+
 FINE_CONFIG = {
-    'INTRA_MIA_ABUTT_WEIGHT': {'step': 0.5, 'offset': 0.5},
-    'MIA_WEIGHT': {'step': 0.1, 'offset': 0.2},
-    'FIXED_HARD_FILLER_WEIGHT': {'step': 0.5, 'offset': 0.5},
-    'ABS_DISPLACEMENT_WEIGHT': {'step': 1, 'offset': 1}
+    'INTRA_MIA_ABUTT_WEIGHT': {'step': 1, 'offset': 1},
+    'MIA_WEIGHT': {'step': 0.5, 'offset': 0.5},
+    'FIXED_HARD_FILLER_WEIGHT': {'step': 1, 'offset': 1},
+    'ABS_DISPLACEMENT_WEIGHT': {'step': 2, 'offset': 2}
 }
 
 results = []
