@@ -105,6 +105,7 @@ void Naller::nallSolver(const int threshold, bool doParallel) {
         return this->cmp_congestion(a, b);
     };
     int iter_num = 2400 * threshold + 600;//3000;//2000*threshold+1000;
+    // int iter_num = 3200 * threshold + 800;//4000;//2000*threshold+1000;
     if(doParallel){
         max_disp_p = 1.5;
         omp_set_num_threads(numThreads);
@@ -351,9 +352,9 @@ bool Naller::nall() {
     // Solving Resource Allocation Task
     // NBLG: Main function of Algorithm
     nallSolver(0, doParallel);
-    std::cout<<"DVFA_cnt"<<DVFA_cnt<<std::endl;
+    std::cout<<"DVFA_cnt: "<<DVFA_cnt<<std::endl;
     nallSolver(1, doParallel);
-    std::cout<<"DVFA_cnt"<<DVFA_cnt<<std::endl;
+    std::cout<<"DVFA_cnt: "<<DVFA_cnt<<std::endl;
     log() <<  "main stage completed!" << std::endl;
     // Post-Processing
     // tech constraints Preprocessing

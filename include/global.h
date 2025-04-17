@@ -41,12 +41,12 @@
 #define HUGE_FLOAT 1.e30
 #define EPSILON 1.e-7
 
-#define INTRA_MIA_ABUTT_WEIGHT (4.5)
-#define MIA_WEIGHT (5.0)
+#define INTRA_MIA_ABUTT_WEIGHT (10.0)
+#define MIA_WEIGHT (1.0)
 #define FIXED_HARD_FILLER_WEIGHT (5.6)
 #define ABS_DISPLACEMENT_WEIGHT (9.0)
 #define INTRA_CELL_RIPUP_TIMES (1)
-#define INTRA_CELL_RIPUP_FREQ (100)
+#define INTRA_CELL_RIPUP_FREQ (200)
 
 
 // lef Reader modules
