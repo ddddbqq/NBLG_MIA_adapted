@@ -229,7 +229,7 @@ bool Naller::changeFillerWidth(MIA::Filler* filler, const int& w, bool update_no
     std::cout << "changeFillerWidth: Filler is null" << std::endl;
     return false;
   }
-  bool res;
+  bool res = true;
   if (update_node){
     res = reduceNodeFillerOccupy(filler);
   }
@@ -323,14 +323,14 @@ bool Naller::DVFA(Cell* cell){
     std::cout << "DVFA: cell is nullptr" << std::endl;
     return false;
   }
-#ifdef DEBUG_TEMP
-  if (cell->name_ == "FE_OCPC1868_n_15768") {
-    debug_cnt++;
-    if (debug_cnt == 2270) {
-      debug_cnt = 2270;
-    }
-  }
-#endif 
+  //#ifdef DEBUG_TEMP
+  //  if (cell->name_ == "FE_OCPC1868_n_15768") {
+  //    debug_cnt++;
+  //    if (debug_cnt == 2270) {
+  //      debug_cnt = 2270;
+  //    }
+  //  }
+  //#endif 
   bool intra_row = false;
   bool inter_row_t = false;
   bool inter_row_b = false;
@@ -344,7 +344,8 @@ bool Naller::DVFA(Cell* cell){
     inter_row_b = true;
   }
   if (intra_row == false && inter_row_t == false && inter_row_b == false){
-    //std::cout << "DVFA: no need to do DVFA" << std::endl;
+    if(ckt.do_detailed_MIA)
+      std::cout << "DVFA: no need to do DVFA" << std::endl;
     return false;
   }
   

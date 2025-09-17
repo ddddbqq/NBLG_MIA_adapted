@@ -60,6 +60,18 @@ score = (1 + delta_rate/100) * temp_avg_disp * (1 + of_cnt/1000);
 avg_disp : 8.80869, of_cnt : 5, hpwl_gp : 276828 hpwl_lg : 339968 delta_rate : 22.8082%
 """
 
+"""
+mgc_des_perf_1 param:
+12.0, 0.7, 8.8, 1.5, 1, 200
+[ 860.184 ]   iteration : 3999 of_cnt : 4931; s_am : inf; m_max : 37.785; avg_disp : 19.4815; max_disp : 377.85
+DVFA_cnt: 73083928
+[ 860.184 ] main stage completed!
+[ 860.184 ] ******************legalization completed. Total : 858.849 sec ******************
+[ 860.187 ]   row aligned
+[ 860.195 ]   fenceRegion matched
+[ 860.393 ]   hpwl_gp : 1.18388e+06 hpwl_lg : 1.76063e+06 delta_rate : 48.7165%
+"""
+
 #temp member for strict score cal: naller.of_cnt_for_temp_output, ckt.temp_delta_rate, function nallsovler, cal_hpwl
 
 
@@ -79,19 +91,19 @@ OTHER_PARAMS = {
 }
 
 DEFAULT_VALUES = {
-    WEIGHT_PARAMS[0]: 4.5,
-    WEIGHT_PARAMS[1]: 1.0,
-    WEIGHT_PARAMS[2]: 5.6,
-    WEIGHT_PARAMS[3]: 9.0,
+    WEIGHT_PARAMS[0]: 13.0,
+    WEIGHT_PARAMS[1]: 1.8,
+    WEIGHT_PARAMS[2]: 6.4,
+    WEIGHT_PARAMS[3]: 2.0,
     'INTRA_CELL_RIPUP_TIMES': 1,
-    'INTRA_CELL_RIPUP_FREQ': 100
+    'INTRA_CELL_RIPUP_FREQ': 200
 }
 
 COARSE_RANGES = {
-    'INTRA_MIA_ABUTT_WEIGHT': [4, 5, 6, 7, 8, 10, 11],    
-    'MIA_WEIGHT': [0.6, 0.9, 1.2, 1.35],                  
-    'FIXED_HARD_FILLER_WEIGHT': [4.0, 4.8, 5.6, 6.4],
-    'ABS_DISPLACEMENT_WEIGHT': [6, 8, 10, 12]  
+    'INTRA_MIA_ABUTT_WEIGHT': [12, 13, 14, 15, 16],    
+    'MIA_WEIGHT': [1.2, 1.5, 1.8, 2.1, 2.4, 2.7],                  
+    'FIXED_HARD_FILLER_WEIGHT': [5.6, 6.4, 7.2, 8.0, 8.8],
+    'ABS_DISPLACEMENT_WEIGHT': [0.5, 1, 1.5, 2, 2.5]  
 }
 
 # COARSE_RANGES = {
@@ -106,7 +118,7 @@ FINE_CONFIG = {
     'INTRA_MIA_ABUTT_WEIGHT': {'step': 1, 'offset': 1},
     'MIA_WEIGHT': {'step': 0.5, 'offset': 0.5},
     'FIXED_HARD_FILLER_WEIGHT': {'step': 1, 'offset': 1},
-    'ABS_DISPLACEMENT_WEIGHT': {'step': 2, 'offset': 2}
+    'ABS_DISPLACEMENT_WEIGHT': {'step': 0.5, 'offset': 0.5}
 }
 
 results = []

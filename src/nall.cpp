@@ -105,7 +105,7 @@ void Naller::nallSolver(const int threshold, bool doParallel) {
         return this->cmp_congestion(a, b);
     };
     int iter_num = 2400 * threshold + 600;//3000;//2000*threshold+1000;
-    // int iter_num = 3200 * threshold + 800;//4000;//2000*threshold+1000;
+    // int iter_num = 9200 * threshold + 800;//6000;//2000*threshold+1000;
     if(doParallel){
         max_disp_p = 1.5;
         omp_set_num_threads(numThreads);
