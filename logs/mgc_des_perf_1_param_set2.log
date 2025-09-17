@@ -226,3 +226,22 @@ DVFA_cnt: 150857437
 [1521.100 ]   row aligned
 [1521.109 ]   fenceRegion matched
 [1521.372 ]   hpwl_gp : 1.18388e+06 hpwl_lg : 1.46752e+06 delta_rate : 23.9585%
+
+
+Design Name: des_perf
+[   1.371 ] ******************legalization start******************
+[   1.444 ] ******************init_adjust******************
+[   1.444 ]   fenceRegions: 0 defaultCellIds : 112644
+[   1.444 ]   spNetRegions 55
+[   1.478 ]   num_errorRegion : 0
+[   1.488 ]   fenceRegion matched
+[   1.583 ]   after preprocessing: s_am: inf;m_max: 1.875;avg_disp: 2.75854;max_disp: 18.75
+[ 254.537 ]   iteration : 599 of_cnt : 18859; s_am : inf; m_max : 10.09; avg_disp : 7.77465; max_disp : 100.9
+DVFA_cnt: 26588003
+[ 601.487 ]   iteration : 2999 of_cnt : 1260; s_am : inf; m_max : 9.09; avg_disp : 8.84852; max_disp : 90.9
+DVFA_cnt: 47198829
+[ 601.487 ] main stage completed!
+[ 601.487 ] ******************legalization completed. Total : 600.116 sec ******************
+[ 601.490 ]   row aligned
+[ 601.499 ]   fenceRegion matched
+[ 601.708 ]   hpwl_gp : 1.24569e+06 hpwl_lg : 1.4619e+06 delta_rate : 17.357%

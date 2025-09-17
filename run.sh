@@ -5,5 +5,5 @@
 # mgc_pci_bridge32_1   mgc_pci_bridge32_2   mgc_superblue11   mgc_superblue12   mgc_superblue16)
 # benchmark="fft_2_md2"
 # benchmark="mgc_pci_bridge32_1"
-benchmark="mgc_pci_bridge32_2"
+benchmark="mgc_edit_dist_1"
 ./build/MCHLG -doParallel false -lef ./benchmarks/$benchmark/tech.lef -lef ./benchmarks/$benchmark/cells_modified.lef -def ./benchmarks/$benchmark/placed.def -placement_constraints ./benchmarks/$benchmark/placement.constraints -output_def ./output/$benchmark.def

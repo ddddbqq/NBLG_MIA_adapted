@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 from matplotlib.patches import Rectangle
 
 # ¶¨ÒåÑÕÉ«Ó³ÉäºÍÎ¥¹æ¼ì²éº¯Êý
-color_map = {'LVT': 'red', 'HVT': 'green', 'SVT': 'blue'}
+color_map = {'LVT': 'red', 'HVT': 'blue', 'SVT': 'grey'}
 
 def parse_def_file(filename):
     cells = []
@@ -116,13 +116,13 @@ def plot_layout(cells):
         ax.add_patch(cell_rect)
         
         # Ìí¼ÓÎÄ×Ö±êÇ©
-        ax.text(
-            cell['x'] + cell['width']/2,
-            cell['y'] + cell['height']/2,
-            cell['name'],
-            ha='center', va='center',
-            color='white', fontsize=8
-        )
+        # ax.text(
+        #     cell['x'] + cell['width']/2,
+        #     cell['y'] + cell['height']/2,
+        #     cell['name'],
+        #     ha='center', va='center',
+        #     color='white', fontsize=8
+        # )
         
         # »æÖÆÌî³äÆ÷
         for f in cell['fillers']:
@@ -145,8 +145,8 @@ def plot_layout(cells):
     # ´´½¨Í¼Àý
     legend_elements = [
         Rectangle((0,0),1,1, facecolor='red', edgecolor='black', label='LVT'),
-        Rectangle((0,0),1,1, facecolor='green', edgecolor='black', label='HVT'),
-        Rectangle((0,0),1,1, facecolor='blue', edgecolor='black', label='SVT'),
+        Rectangle((0,0),1,1, facecolor='blue', edgecolor='black', label='HVT'),
+        Rectangle((0,0),1,1, facecolor='grey', edgecolor='black', label='SVT'),
         Rectangle((0,0),1,1, facecolor='white', edgecolor='red', hatch='////', label='Filler')
     ]
     ax.legend(handles=legend_elements, loc='upper right')
@@ -159,12 +159,12 @@ def plot_layout(cells):
     #else:
     #    print("\nNo violations found.")
     
-    plt.grid(True)
+    plt.grid(False)
     plt.show()
 
 # Ö÷³ÌÐò
 if __name__ == "__main__":
-    input_file = "/home/jhqiao/workspace/NBLG/Mixed-Cell-Height_legalizer/inter_intra_3_3.def"  # ÐÞ¸ÄÎªÄãµÄÎÄ¼þÂ·¾¶
+    input_file = "/home/jhqiao/workspace/NBLG/Mixed-Cell-Height_legalizer/temp_result.def"  # ÐÞ¸ÄÎªÄãµÄÎÄ¼þÂ·¾¶
     
     cells = parse_def_file(input_file)
     #violations = check_violations(cells)

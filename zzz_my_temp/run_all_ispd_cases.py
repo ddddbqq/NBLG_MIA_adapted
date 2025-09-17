@@ -13,9 +13,9 @@ os.makedirs(LOG_DIR, exist_ok=True)
 
 # benchmarks
 ispd2014_benchmarks = [
-    'mgc_des_perf_1', 'mgc_des_perf_2', 'mgc_edit_dist_1', 'mgc_edit_dist_2',
-    'mgc_fft', 'mgc_matrix_mult', 'mgc_pci_bridge32_1', 'mgc_pci_bridge32_2',
-    #'mgc_superblue11', 'mgc_superblue12', 'mgc_superblue16'
+    #'mgc_des_perf_1', 'mgc_des_perf_2', 'mgc_edit_dist_1', 'mgc_edit_dist_2',
+    #'mgc_fft', 'mgc_matrix_mult', 'mgc_pci_bridge32_1', 'mgc_pci_bridge32_2',
+    'mgc_superblue11', 'mgc_superblue12', 'mgc_superblue16'
 ]
 
 param_sets = [
