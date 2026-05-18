@@ -68,11 +68,15 @@ void Naller::nallSolver(const int threshold, const int index) {
         for (auto cellId : batches[index]) // batch : global variable 
         {
             Cell* sp = ckt.cells[ cellId ];
+            if (sp->isFixed_) continue;
             bool is_cong;
             if(ckt.do_MIA) is_cong = isStripCongested(sp, 1, sp->regionId_);
             else is_cong = isStripCongested(sp->cur_x_, sp->cur_y_, sp->width_, sp->height_, 1, sp->regionId_);
             if(!is_cong and (iter > threshold)) {
-                continue;
+                if (iter % INTRA_CELL_RIPUP_FREQ == 0 
+                        and iter <= INTRA_CELL_RIPUP_FREQ * INTRA_CELL_RIPUP_TIMES
+                        and sp->is_intra_MIA_vio_){;}
+                else  continue;
             }
             ++sp->ripup_cnt_;
             if(ckt.do_MIA) moveOutCell(sp, p_factor_pThread);
@@ -180,13 +184,18 @@ void Naller::nallSolver(const int threshold, bool doParallel) {
                     {
                         Cell* sp = ckt.cells[ i ]; 
                         assert(!sp->isFixed_);   
-                        if(!isStripCongested(sp->cur_x_, sp->cur_y_, sp->width_, sp->height_, 1, sp->regionId_) and (iter > 0)) {
-                        continue;
+                        bool is_cong;
+                        if(ckt.do_MIA) is_cong = isStripCongested(sp, 1, sp->regionId_);
+                        else is_cong = isStripCongested(sp->cur_x_, sp->cur_y_, sp->width_, sp->height_, 1, sp->regionId_);
+                        if(!is_cong and (iter > 0)) {
+                            continue;
                         }
-                        reduceNodeCost(sp->cur_x_, sp->cur_y_, sp->width_, sp->height_);
+                        if(ckt.do_MIA) moveOutCell(sp);
+                        else reduceNodeCost(sp->cur_x_, sp->cur_y_, sp->width_, sp->height_);
                         route(i);                 
                     } 
-                    of_cnt = countOverflows(of_netIds);
+                    if(ckt.do_MIA) of_cnt = countMIAOverflows(of_netIds);
+                    else of_cnt = countOverflows(of_netIds);
                     if(of_cnt == 0 or (iter == iter_num - 1)) {
                         calDisplacment();
                         log()<<"  iteration: "<<iter<<" of_cnt : "<<of_cnt
@@ -200,20 +209,27 @@ void Naller::nallSolver(const int threshold, bool doParallel) {
                 if(of_cnt == 0) {
                     return;
                 } 
-                iter_num = 6000; //for big case
+                //iter_num = 6000; //for big case
+                iter_num = 3000; //for big case
                 for (int iter = 0; iter < iter_num; ++iter){    
                     p_factor = 1.0 + 0.7*exp(-10*exp(-0.01*(iter-300)));
                     for (auto i : of_netIds)
                     {
                         Cell* sp = ckt.cells[ i ]; 
                         assert(!sp->isFixed_);   
-                        if(!isStripCongested(sp->cur_x_, sp->cur_y_, sp->width_, sp->height_, 1, sp->regionId_) and (iter > 0)) {
-                        continue;
+                        bool is_cong;
+                        if(ckt.do_MIA) is_cong = isStripCongested(sp, 1, sp->regionId_);
+                        else is_cong = isStripCongested(sp->cur_x_, sp->cur_y_, sp->width_, sp->height_, 1, sp->regionId_);
+                        if(!is_cong and (iter > 0)) {
+                            continue;
                         }
-                        reduceNodeCost(sp->cur_x_, sp->cur_y_, sp->width_, sp->height_);
+                        if(ckt.do_MIA) moveOutCell(sp);
+                        else reduceNodeCost(sp->cur_x_, sp->cur_y_, sp->width_, sp->height_);
                         route(i);                 
                     } 
-                    int of_cnt = countOverflows(of_netIds);
+                    int of_cnt;
+                    if(ckt.do_MIA) of_cnt = countMIAOverflows(of_netIds);
+                    else of_cnt = countOverflows(of_netIds);
                     if(of_cnt == 0 or (iter == iter_num - 1)) {
                         calDisplacment();
                         log()<<"  iteration : "<<iter<<" of_cnt : "<<of_cnt

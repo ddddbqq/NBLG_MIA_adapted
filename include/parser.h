@@ -8,6 +8,53 @@ static void* userData;
 #define PO_PIN 2
 #define NONPIO_PIN 3
 
+#ifdef ENABLE_TIME_MEASUREMENT
+class PrecisionTimer{
+public:
+    using Clock = std::chrono::high_resolution_clock;
+    using Duration = std::chrono::nanoseconds;
+    
+    void start() {
+        start_time = Clock::now();
+    }
+    
+    Duration stop() {
+        return std::chrono::duration_cast<Duration>(Clock::now() - start_time);
+    }
+    
+private:
+    std::chrono::time_point<Clock> start_time;
+};
+
+struct FunctionStats {
+    std::atomic<uint64_t> call_count{0};
+    std::atomic<uint64_t> total_ns{0};
+    std::atomic<uint64_t> min_ns{std::numeric_limits<uint64_t>::max()};
+    std::atomic<uint64_t> max_ns{0};
+    
+    void record(uint64_t duration_ns) {
+        call_count.fetch_add(1, std::memory_order_relaxed);
+        total_ns.fetch_add(duration_ns, std::memory_order_relaxed);
+        
+        uint64_t current_min = min_ns.load(std::memory_order_relaxed);
+        while (duration_ns < current_min && 
+               !min_ns.compare_exchange_weak(current_min, duration_ns, 
+                                             std::memory_order_relaxed)) {}
+        
+        uint64_t current_max = max_ns.load(std::memory_order_relaxed);
+        while (duration_ns > current_max && 
+               !max_ns.compare_exchange_weak(current_max, duration_ns, 
+                                            std::memory_order_relaxed)) {}
+    }
+};
+
+
+
+void print_function_stats();
+
+#endif
+
+
 class Cell;
 namespace MIA{
 
@@ -18,6 +65,7 @@ enum VT_type{
   SVT,
   LVT,
   HVT,
+  TPN
 };
 
 class Filler{
@@ -244,6 +292,11 @@ public:
     inline void setHVT(){
         VT_type_ = MIA::HVT;
     }
+    inline void setTPN(){
+        VT_type_ = MIA::TPN;
+        is_TPN_cell_ = true;
+        is_intra_MIA_vio_ = false;
+    }
 
     int inter_row_overlap_t_;
     int inter_row_overlap_b_;
@@ -251,6 +304,8 @@ public:
     MIA::Filler* inter_filler_tr;
     MIA::Filler* inter_filler_bl;
     MIA::Filler* inter_filler_br;
+    
+    bool is_TPN_cell_;
 
     
     Cell ()  { name_ = ""; cellorient_ = ""; id_ = 0; type_ = 0; regionId_ = -1; cur_x_ = 0; cur_y_ = 0; 
@@ -259,7 +314,7 @@ public:
         cur_y_temp_ = 0.0;  setWinSize(0, 0, 0, 0); VT_type_ = MIA::SVT; is_intra_MIA_vio_ = false; 
         filler_l = nullptr; filler_r = nullptr; inter_row_overlap_t_ = 0; 
         inter_row_overlap_b_ = 0; inter_filler_tl = nullptr; inter_filler_tr = nullptr; 
-        inter_filler_bl = nullptr; inter_filler_br = nullptr;
+        inter_filler_bl = nullptr; inter_filler_br = nullptr; is_TPN_cell_ = false;
         }
     inline void setWinSize(int xLL, int yLL, int xUR, int yUR) {
         extendedWin_.set(xLL, yLL, xUR, yUR);
@@ -443,9 +498,13 @@ public:
     bool do_MIA;
     bool check_inter_row_MIA;
     bool do_detailed_MIA;
-    void setMIACells(int debug_flag = 0,bool check_inter_row = false, bool do_detailed = false, float LVT_ratio = 0.1, float HVT_ratio = 0.1, int MIA_min_width = 10);
+    void setMIACells(int debug_flag = 0, bool check_inter_row = false, bool do_detailed = false, 
+                     float LVT_ratio = 0.1, float HVT_ratio = 0.1, int MIA_min_width = 4, 
+                     int MIA_inter_row_min_width = 2);
+    void setTPNcells(float TPN_ratio = 0.3);
     void double_or_triple_cell_height(float double_rate = 0.1, float triple_rate = 0.05);
     int MIA_min_width_;
+    int MIA_inter_row_min_width_;
     void write_temp_result(std::string filename);
 
 public:

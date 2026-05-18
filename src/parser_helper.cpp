@@ -189,13 +189,21 @@ void circuit::setMaxXY() {
     g_max_y = g_max_y / defaultH * defaultH;
 }
 
-void circuit::setMIACells(int debug_flag, bool check_inter_row, bool do_detailed, float LVT_ratio, float HVT_ratio, int MIA_min_width) {
+void circuit::setMIACells(int debug_flag, bool check_inter_row, bool do_detailed, float LVT_ratio, float HVT_ratio, int MIA_min_width, int MIA_inter_row_min_width) {
+  std::cout << "Config: Set MIA cells, ratio: " << LVT_ratio << " " << HVT_ratio << std::endl;
+  if (check_inter_row) {
+    std::cout << "Config: Check inter-row MIA" << std::endl;
+  }
+  if (do_detailed) {
+    std::cout << "Config: Detailed MIA" << std::endl;
+  }
   int LVT_num = LVT_ratio * defaultCellIds.size() + 1 ;
   int HVT_num = HVT_ratio * defaultCellIds.size() + 1 ;
   do_MIA = true;
   check_inter_row_MIA = check_inter_row;
   do_detailed_MIA = do_detailed;
   MIA_min_width_ = MIA_min_width;
+  MIA_inter_row_min_width_ = MIA_inter_row_min_width;
   std::vector<Cell*> cells_cpy = cells;
   if (debug_flag == 1) {
     cells_cpy[0]->setLVT();
@@ -222,6 +230,7 @@ void circuit::setMIACells(int debug_flag, bool check_inter_row, bool do_detailed
 }
 
 void circuit::double_or_triple_cell_height(float double_rate, float triple_rate) {
+  std::cout<< "Config: double or triple cell height, ratio: " << double_rate << " " << triple_rate << std::endl;
   for (int i = 0; i < cells.size(); i++) {
     if (cells[i]->isFixed_) continue;
     if (cells[i]->height_ == defaultH and cells[i]->width_ >= 2) {
@@ -238,6 +247,21 @@ void circuit::double_or_triple_cell_height(float double_rate, float triple_rate)
       if (rand() % 100 < triple_rate * 100) {
         cells[i]->height_ = defaultH * 3;
         cells[i]->width_ = cells[i]->width_ / 3;
+      }
+    }
+  }
+}
+
+
+void circuit::setTPNcells(float TPN_ratio){
+  std::cout<< "Config: set TPN cells, ratio: " << TPN_ratio << std::endl;
+  for (int i = 0; i < cells.size(); i++) {
+    if (cells[i]->isFixed_) continue;
+    if (cells[i]->height_ == defaultH * 2) {
+      if (rand() % 100 < TPN_ratio * 100) {
+        cells[i]->setTPN();
+        cells[i]->height_ = defaultH * 3; 
+        cells[i]->aligendRow_ = 2;
       }
     }
   }
