@@ -30,7 +30,8 @@ public:
         updated_ = false;
         LVT_occupied_ = 0;
         HVT_occupied_ = 0;
-        SVT_occupied_ = 0;        
+        SVT_occupied_ = 0;
+        TPN_occupied_ = 0;        
         }
 public:
     int regionId_;
@@ -46,6 +47,7 @@ public:
     int LVT_occupied_;
     int HVT_occupied_;
     int SVT_occupied_;
+    int TPN_occupied_;
     std::vector<MIA::Filler*> fillerList;
 };
 // map grids
@@ -168,7 +170,7 @@ private:
     bool genFillers(Cell* cell, const int& left_w, const int& right_w, bool is_hard);
     bool genInterRowFillers(Cell* cell, const int& left_w, const int& right_w, 
                     bool is_hard, int overlap_w = 0, int s_x = 0, int top_or_bottom = 0);
-
+    bool genTPNFillers(Cell* cell);
     
     bool DVFA(Cell* cell); //Dynamic Virtual Filler Algorithm
     int DVFA_cnt;

@@ -71,12 +71,16 @@ namespace MIA{
   }
 
   double Filler::calCost(Cell* income_cell){
+    double cost = 0;
     if (income_cell == nullptr){
       std::cout << "Filler::calCost: income_cell is nullptr" << std::endl;
-      return 0;
+      return cost;
     }
-    double cost = 0;
     if (is_valid_ == false) {
+      return cost;
+    }
+    if (cell_ == income_cell) {
+      std::cout << "Filler::calCost: income_cell is the same as cell_" << std::endl;
       return cost;
     }
     int theta_ij = 1;
@@ -88,6 +92,19 @@ namespace MIA{
              * theta_ij 
              *(std::min(income_cell->height_, height_) 
              / std::max(income_cell->height_, height_));
+      
+      if (type_ == MIA::TPN) {
+        if (left_or_right_ == 1) { //left, top
+          if (income_cell->cur_y_ != y_) {
+            cost = 0;
+          }
+        }
+        if (left_or_right_ == 2) { //right, bottom
+          if (income_cell->cur_y_ + income_cell->height_ != y_ + height_) {
+            cost = 0;
+          }
+        }
+      }
     }
     else {
       if (is_hard_ == true){
@@ -115,6 +132,7 @@ bool Naller::addVTOccupy(const int& s_x, const int& s_y,
             if (vt == MIA::LVT) node_info.LVT_occupied_++;
             else if (vt == MIA::HVT) node_info.HVT_occupied_++;
             else if (vt == MIA::SVT) node_info.SVT_occupied_++;
+            else if (vt == MIA::TPN) node_info.TPN_occupied_++;
             else {
               std::cout << "addVTOccupy: Invalid VT type" << std::endl;
               return false;
@@ -138,16 +156,18 @@ bool Naller::reduceVTOccupy(const int& s_x, const int& s_y,
             if (vt == MIA::LVT) node_info.LVT_occupied_--;
             else if (vt == MIA::HVT) node_info.HVT_occupied_--;
             else if (vt == MIA::SVT) node_info.SVT_occupied_--;
+            else if (vt == MIA::TPN) node_info.TPN_occupied_--;
             else {
               std::cout << "reduceVTOccupy: Invalid VT type" << std::endl;
               return false;
             }
-            if (node_info.LVT_occupied_ < 0 || node_info.HVT_occupied_ < 0 || node_info.SVT_occupied_ < 0)
+            if (node_info.LVT_occupied_ < 0 || node_info.HVT_occupied_ < 0 || node_info.SVT_occupied_ < 0 || node_info.TPN_occupied_ < 0)
             {
               std::cout << "ERROR: reduceVTOccupy: " 
                         << node_info.LVT_occupied_ << " " 
                         << node_info.HVT_occupied_ << " " 
-                        << node_info.SVT_occupied_ << std::endl;
+                        << node_info.SVT_occupied_ << " "
+                        << node_info.TPN_occupied_ << std::endl;
               return false;
             }
         }
@@ -167,12 +187,15 @@ int Naller::getNodeVTOccupy(const int& s_x, const int& s_y, MIA::VT_type vt){
   if (vt == MIA::LVT) return node.node_infos[g_max_x*s_y/defaultH + s_x].LVT_occupied_;
   else if (vt == MIA::HVT) return node.node_infos[g_max_x*s_y/defaultH + s_x].HVT_occupied_;
   else if (vt == MIA::SVT) return node.node_infos[g_max_x*s_y/defaultH + s_x].SVT_occupied_;
+  else if (vt == MIA::TPN) return node.node_infos[g_max_x*s_y/defaultH + s_x].TPN_occupied_;
   else return -1;
 }
+
 int Naller::getNodeOccupy(const int& s_x, const int& s_y){
   return node.node_infos[g_max_x*s_y/defaultH + s_x].LVT_occupied_ +
          node.node_infos[g_max_x*s_y/defaultH + s_x].HVT_occupied_ +
-         node.node_infos[g_max_x*s_y/defaultH + s_x].SVT_occupied_;
+         node.node_infos[g_max_x*s_y/defaultH + s_x].SVT_occupied_ + 
+         node.node_infos[g_max_x*s_y/defaultH + s_x].TPN_occupied_;
 }
 
 bool Naller::addNodeFillerOccupy(MIA::Filler* filler){
@@ -260,6 +283,10 @@ bool Naller::genFillers(Cell* cell, const int& left_w, const int& right_w,
     filler_left->setHard();
     filler_right->setHard();
   }
+  else {
+    filler_left->setSoft();
+    filler_right->setSoft();
+  }
   addNodeFillerOccupy(filler_left);
   addNodeFillerOccupy(filler_right);
   cell->filler_l = filler_left;
@@ -274,7 +301,7 @@ bool Naller::genInterRowFillers(Cell* cell, const int& left_w, const int& right_
     return false;
   }
   if (overlap_w <= 0 or 
-      overlap_w > ckt.MIA_min_width_ or 
+      overlap_w > ckt.MIA_inter_row_min_width_ or 
       s_x <= 0 or 
       !(top_or_bottom == -1 or top_or_bottom == 1)) {
     std::cout << "genInterRowFillers: invalid parameters" << std::endl;
@@ -302,6 +329,10 @@ bool Naller::genInterRowFillers(Cell* cell, const int& left_w, const int& right_
     filler_left->setHard();
     filler_right->setHard();
   }
+  else {
+    filler_left->setSoft();
+    filler_right->setSoft();
+  }
   filler_left->setPos(left_x, s_y_l);
   filler_left->height_ = height;
   filler_right->setPos(right_x, s_y_r);
@@ -319,9 +350,18 @@ bool Naller::genInterRowFillers(Cell* cell, const int& left_w, const int& right_
 }
 
 bool Naller::DVFA(Cell* cell){
+
+#ifdef ENABLE_TIME_MEASUREMENT
+  static thread_local PrecisionTimer timer;
+  timer.start();
+#endif
+
   if (cell == nullptr) {
     std::cout << "DVFA: cell is nullptr" << std::endl;
     return false;
+  }
+  if (cell->is_TPN_cell_) {
+    return true;
   }
   //#ifdef DEBUG_TEMP
   //  if (cell->name_ == "FE_OCPC1868_n_15768") {
@@ -355,6 +395,7 @@ bool Naller::DVFA(Cell* cell){
   std::vector<int> s_y_r_list;
   std::vector<int> height_list;
   std::vector<int> width_list;
+  std::vector<int> MIA_min_width_list;
   std::vector<int> MIA_type_list;
   int cnt = 0;
   if (intra_row){
@@ -363,12 +404,13 @@ bool Naller::DVFA(Cell* cell){
     s_y_r_list.push_back(cell->cur_y_);
     height_list.push_back(cell->height_);
     width_list.push_back(cell->width_);
+    MIA_min_width_list.push_back(ckt.MIA_min_width_);
     MIA_type_list.push_back(0);
     cnt++;
   }
   if (inter_row_t){
     int overlap_w = cell->inter_row_overlap_t_;
-    if (overlap_w <= 0 or overlap_w > ckt.MIA_min_width_) {
+    if (overlap_w <= 0 or overlap_w > ckt.MIA_inter_row_min_width_) {
       std::cout << "DVFA: error config when inter row" << std::endl;
       return false;
     }
@@ -393,12 +435,13 @@ bool Naller::DVFA(Cell* cell){
     s_y_r_list.push_back(s_y_r);
     height_list.push_back(height);
     width_list.push_back(width);
+    MIA_min_width_list.push_back(ckt.MIA_inter_row_min_width_);
     MIA_type_list.push_back(1);
     cnt++;
   }
   if (inter_row_b){
     int overlap_w = cell->inter_row_overlap_b_;
-    if (overlap_w <= 0 or overlap_w > ckt.MIA_min_width_) {
+    if (overlap_w <= 0 or overlap_w > ckt.MIA_inter_row_min_width_) {
       std::cout << "DVFA: error config when inter row" << std::endl;
       return false;
     }
@@ -423,11 +466,11 @@ bool Naller::DVFA(Cell* cell){
     s_y_r_list.push_back(s_y_r);
     height_list.push_back(height);
     width_list.push_back(width);
+    MIA_min_width_list.push_back(ckt.MIA_inter_row_min_width_);
     MIA_type_list.push_back(2);
     cnt++;
   }
 
-  int MIA_min_width = ckt.MIA_min_width_;
   MIA::VT_type vt = cell->VT_type_;
   int res = 1;
   for (int i = 0; i < cnt; i++){ 
@@ -436,6 +479,7 @@ bool Naller::DVFA(Cell* cell){
     int s_y_r = s_y_r_list[i];
     int height = height_list[i];
     int width = width_list[i];
+    int MIA_min_width = MIA_min_width_list[i];
     int MIA_type = MIA_type_list[i];
     int filler_total_width = MIA_min_width - width;
 
@@ -584,7 +628,7 @@ bool Naller::DVFA(Cell* cell){
       }
     }
 
-    //gen or mod fillers
+    //gen or modify fillers
 #ifdef DEBUG_TEMP
     // if (debug_cnt == 1134) {
     // debug_cnt = 1134;}
@@ -601,6 +645,10 @@ bool Naller::DVFA(Cell* cell){
         if (is_hard){
           cell->filler_l->setHard();
           cell->filler_r->setHard();
+        }
+        else {
+          cell->filler_l->setSoft();
+          cell->filler_r->setSoft();
         }
         addNodeFillerOccupy(cell->filler_l);
         addNodeFillerOccupy(cell->filler_r);
@@ -624,6 +672,10 @@ bool Naller::DVFA(Cell* cell){
           cell->inter_filler_tl->setHard();
           cell->inter_filler_tr->setHard();
         }
+        else {
+          cell->inter_filler_tl->setSoft();
+          cell->inter_filler_tr->setSoft();
+        }
         addNodeFillerOccupy(cell->inter_filler_tl);
         addNodeFillerOccupy(cell->inter_filler_tr);
       }
@@ -641,6 +693,10 @@ bool Naller::DVFA(Cell* cell){
           cell->inter_filler_bl->setHard();
           cell->inter_filler_br->setHard();
         }
+        else {
+          cell->inter_filler_bl->setSoft();
+          cell->inter_filler_br->setSoft();
+        }
         addNodeFillerOccupy(cell->inter_filler_bl);
         addNodeFillerOccupy(cell->inter_filler_br);
       }
@@ -649,6 +705,12 @@ bool Naller::DVFA(Cell* cell){
       }
     } 
   }
+
+#ifdef ENABLE_TIME_MEASUREMENT
+  auto duration = timer.stop();
+  target_function_stats.record(duration.count());
+#endif
+
   return (res == 1);
 }
 
@@ -657,13 +719,16 @@ bool Naller::initFiller(){
   std::vector<string> error_cells;
   for (unsigned i : ckt.defaultCellIds){
     Cell* sp = ckt.cells[ i ];
-    if(sp->isFixed_) continue;
+    if (sp->isFixed_) continue;
     if (sp->is_intra_MIA_vio_){
       res = DVFA(sp);
       if (res == 0){
         error_cells.push_back(sp->name_);
       }
-    }   
+    }
+    if (sp->is_TPN_cell_){
+      genTPNFillers(sp);
+    } 
   }
   if (!error_cells.empty()){
     std::cout << "MIA: Failed to init fillers in cells: ";
@@ -689,24 +754,38 @@ bool Naller::isStripCongested(Cell* cell, const int& lBound, int regionId){
     int width = cell->width_;
     int height = cell->height_;
     MIA::VT_type vt = cell->VT_type_;
+    int TPN_bound = 0;
     for (int j = s_y; j < (s_y + height); j+=defaultH)
     {
         for (int i = s_x; i < (s_x + width); ++i)
         {
+            TPN_bound = 0;
             NodeInfo& node_info = node.node_infos[g_max_x*j/defaultH + i];
-            if(node_info.usage_ > lBound) {
+            if(!node_info.fillerList.empty()){
+                for (auto filler : node_info.fillerList){
+                    if(filler->type_ != vt and filler->is_hard_ and filler->is_valid_){
+                      return true;
+                    }
+                    if (cell->VT_type_ == MIA::TPN and filler->type_ == MIA::TPN) {
+                      if (filler->left_or_right_ == 1) {
+                        if (s_y == filler->y_) {
+                          ++TPN_bound;
+                        }
+                      }
+                      if (filler->left_or_right_ == 2) {
+                        if (s_y + height == filler->y_ + filler->height_) {
+                          ++TPN_bound;
+                        }
+                      }
+                    }
+                }
+            }
+            if(node_info.usage_ > lBound + TPN_bound) {
                 return true;
             }
             if(node_info.regionId_ != regionId) {
                 return true;
-            }
-            if(!node_info.fillerList.empty()){
-                for (auto filler : node_info.fillerList){
-                    if(filler->type_ != vt and filler->is_hard_ and filler->is_valid_){
-                        return true;
-                    }
-                }
-            }      
+            }    
         }
     }
     return false;
@@ -788,7 +867,7 @@ void Naller::moveInCell(Cell* cell, double p_factor_pThread){
     }
   }
 
-  if (cell->is_intra_MIA_vio_){
+  if (cell->is_intra_MIA_vio_ or cell->is_TPN_cell_){
     if (cell->filler_l == nullptr or cell->filler_r == nullptr) {
       std::cout << "moveInCell: filler is nullptr " << std::endl;
       return;
@@ -799,11 +878,19 @@ void Naller::moveInCell(Cell* cell, double p_factor_pThread){
     }
     reduceNodeFillerOccupy(cell->filler_l);
     reduceNodeFillerOccupy(cell->filler_r);
-    cell->filler_l->setPos(s_x - 1, s_y);
-    cell->filler_r->setPos(s_x + width, s_y);
+    if (cell->is_intra_MIA_vio_) {
+      cell->filler_l->setPos(s_x - 1, s_y);
+      cell->filler_r->setPos(s_x + width, s_y);
+    }
+    if (cell->is_TPN_cell_) {
+      cell->filler_l->changeWidth(width);
+      cell->filler_r->changeWidth(width);
+      cell->filler_l->setPos(s_x, s_y + defaultH * 2);
+      cell->filler_r->setPos(s_x, s_y);
+    }
     addNodeFillerOccupy(cell->filler_l);
     addNodeFillerOccupy(cell->filler_r);
-    if(ckt.do_detailed_MIA) DVFA(cell);
+    if(ckt.do_detailed_MIA and cell->is_intra_MIA_vio_) DVFA(cell);
   }
 }
 
@@ -819,7 +906,7 @@ void Naller::moveOutCell(Cell* cell, double p_factor_pThread){
   int height = cell->height_;
   MIA::VT_type vt = cell->VT_type_;
 
-  if (cell->is_intra_MIA_vio_){
+  if (cell->is_intra_MIA_vio_ or cell->is_TPN_cell_){
     if (cell->filler_l == nullptr or cell->filler_r == nullptr) {
       std::cout << "moveOutCell: filler is nullptr" << std::endl;
       return;
@@ -945,19 +1032,33 @@ void Naller::calCellMIAOf(Cell* cell, int& of_cnt, bool update_his){
         printlog(LOG_INFO, "i : %f, j is %f", i * min_width, j * min_width);
       }
       int MIA_of = 0;
+      int TPN_ol = 0;
       if (!node_info.fillerList.empty()){
         for (auto& filler : node_info.fillerList){
           if (filler->type_ != cell->VT_type_ and filler->is_hard_ and filler->is_valid_){
             MIA_of++;
           }
+          if (cell->VT_type_ == MIA::TPN and filler->type_ == MIA::TPN) {
+            if (filler->left_or_right_ == 1) {
+              if (s_y == filler->y_) {
+                TPN_ol++;
+              }
+            }
+            if (filler->left_or_right_ == 2) {
+              if (s_y + height == filler->y_ + filler->height_) {
+                TPN_ol++;
+              }
+            }
+          }
         }
       }
       cell->of_ += MIA_of;
+      cell->of_ -= TPN_ol;
       if(!update_his) continue;
-      if(!node_info.updated_ and (node_info.usage_ > 1 or MIA_of > 0)) {
+      if(!node_info.updated_ and ((node_info.usage_ - TPN_ol) > 1 or MIA_of > 0)) {
         node_info.updated_ = true;
-        if (node_info.usage_ > 1){
-          node_info.hisCost_ += 1 * (node_info.usage_ - 1);
+        if ((node_info.usage_ - TPN_ol) > 1){
+          node_info.hisCost_ += 1 * ((node_info.usage_ - TPN_ol) - 1);
         }
         if (MIA_of > 0){
           node_info.hisCost_ += 1 * MIA_of;
@@ -969,7 +1070,7 @@ void Naller::calCellMIAOf(Cell* cell, int& of_cnt, bool update_his){
   of_cnt += cell->of_;
 
   if (ckt.check_inter_row_MIA){
-    if (cell->VT_type_ != MIA::SVT){
+    if (cell->VT_type_ == MIA::LVT or cell->VT_type_ == MIA::HVT){
       if(checkInterRowMIA(cell)){
         DVFA(cell);
       }
@@ -1058,7 +1159,7 @@ bool Naller::checkInterRowMIA(Cell* cell){
       else y = s_y + height;
       if (outBox(s_x, y, 1, defaultH)) continue;
       bool check_diff_vt = false;
-      for (int i_ = 0; i_ < ckt.MIA_min_width_; ++i_) {
+      for (int i_ = 0; i_ < ckt.MIA_inter_row_min_width_; ++i_) {
         int same_vt_occupy = getNodeVTOccupy(s_x - i_, y, vt);
         if (check_diff_vt) {
           if (same_vt_occupy == 0) {
@@ -1099,6 +1200,7 @@ void circuit::write_temp_result(std::string filename){
     if (theCell->VT_type_ == MIA::HVT) vt = "HVT";
     else if (theCell->VT_type_ == MIA::LVT) vt = "LVT";
     else if (theCell->VT_type_ == MIA::SVT) vt = "SVT";
+    else if (theCell->VT_type_ == MIA::TPN) vt = "TPN";
     else vt = "N/A";
     outfile << "   - " << theCell->name_ << " " << theMacro->name << " VT_TYPE = " << vt << std::endl;
     if(theCell->isFixed_)
@@ -1143,6 +1245,7 @@ void circuit::write_temp_result(std::string filename){
         if (theFiller->type_ == MIA::HVT) vt_ = "HVT";
         else if (theFiller->type_ == MIA::LVT) vt_ = "LVT";
         else if (theFiller->type_ == MIA::SVT) vt_ = "SVT";
+        else if (theFiller->type_ == MIA::TPN) vt_ = "TPN";
         else vt_ = "N/A";
         if (vt_ != vt) {
           std::cout << "write_temp_result:: filler vt not match" << std::endl;
@@ -1154,3 +1257,35 @@ void circuit::write_temp_result(std::string filename){
     }
   }
 }
+
+bool Naller::genTPNFillers(Cell* cell){
+  if (cell == nullptr) {
+    std::cout << "genTPNFillers: cell is nullptr" << std::endl;
+    return false;
+  }
+  int s_x = cell->cur_x_;
+  int bottom_y = cell->cur_y_;
+  int top_y = cell->cur_y_ + defaultH * 2;
+  int width = cell->width_;
+
+  MIA::Filler* filler_top = new MIA::Filler(cell, 1, width); // regard as left
+  MIA::Filler* filler_bottom = new MIA::Filler(cell, 2, width); // regard as right
+
+  filler_top->setPos(s_x, top_y);
+  filler_bottom->setPos(s_x, bottom_y);
+
+  filler_top->height_ = defaultH;
+  filler_bottom->height_ = defaultH;
+
+  filler_top->setSoft();
+  filler_bottom->setSoft();
+
+  addNodeFillerOccupy(filler_top);
+  addNodeFillerOccupy(filler_bottom);
+
+  cell->filler_l = filler_top;
+  cell->filler_r = filler_bottom;
+
+  return true;
+}
+

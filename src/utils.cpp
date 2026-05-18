@@ -201,6 +201,9 @@ void Naller::calDisplacment() {
             continue;
         }
         double  cur_disp = fabs(sp->cur_x_ -  sp->init_x_) + fabs(sp->cur_y_ -  sp->init_y_);
+        // double  cur_disp = fabs(sp->cur_x_ -  sp->cur_x0_) + fabs(sp->cur_y_ -  sp->cur_y0_);
+        // double cur_disp = sqrt((sp->cur_x_ -  sp->init_x_)*(sp->cur_x_ -  sp->init_x_) + (sp->cur_y_ -  sp->init_y_)*(sp->cur_y_ -  sp->init_y_));
+        // double cur_disp = sqrt((sp->cur_x_ -  sp->cur_x0_)*(sp->cur_x_ -  sp->cur_x0_) + (sp->cur_y_ -  sp->cur_y0_)*(sp->cur_y_ -  sp->cur_y0_));
         if(debug_max_print) {
             if(cur_disp > 480.0 or cur_disp < -100.0) {  //100.0 -> 2000.0
                 std::cout<< "name: " << sp->name_ << "; ( " << sp->init_x_*min_width << ","<< sp->init_y_*min_width  << "); (" 
@@ -483,4 +486,33 @@ bool Naller::isStripCongested(const int& s_x, const int& s_y,
     }
     return false;
 }
+
+
+
+#ifdef ENABLE_TIME_MEASUREMENT
+FunctionStats target_function_stats; 
+
+void print_function_stats() {
+    uint64_t calls = target_function_stats.call_count.load();
+    uint64_t total_ns = target_function_stats.total_ns.load();
+    uint64_t min_ns = target_function_stats.min_ns.load();
+    uint64_t max_ns = target_function_stats.max_ns.load();
+    
+    if (calls == 0) {
+        std::cout << "Function has not been called yet." << std::endl;
+        return;
+    }
+    
+    double avg_ns = static_cast<double>(total_ns) / calls;
+    double total_ms = total_ns / 1e6;
+    
+    std::cout << "Function Statistics:\n"
+              << "  Calls: " << calls << "\n"
+              << "  Total time: " << total_ms << " ms\n"
+              << "  Avg time: " << avg_ns << " ns\n"
+              << "  Min time: " << min_ns << " ns\n"
+              << "  Max time: " << max_ns << " ns\n";
+}
+
+#endif
 
